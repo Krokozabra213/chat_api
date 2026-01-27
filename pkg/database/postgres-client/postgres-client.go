@@ -4,9 +4,15 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+)
+
+const (
+	pingTimeout     = 5 * time.Second
+	shutDownTimeout = 10 * time.Second
 )
 
 var (
@@ -40,20 +46,21 @@ func New(cfg PGConfig) (*PostgresClient, error) {
 	sqlDB.SetMaxIdleConns(cfg.maxIdleConns)
 	sqlDB.SetConnMaxLifetime(cfg.connMaxLifetime)
 
+	ctx, cancel := context.WithTimeout(context.Background(), pingTimeout)
+	defer cancel()
+
+	if err := sqlDB.PingContext(ctx); err != nil {
+		return nil, fmt.Errorf("ping: %w", err)
+	}
+
 	return &PostgresClient{db}, nil
 }
 
-// Ping проверка соединения
-func (p *PostgresClient) Ping(ctx context.Context) error {
-	sqlDB, err := p.DB.DB()
-	if err != nil {
-		return err
-	}
-	return sqlDB.PingContext(ctx)
-}
-
 // Shutdown корректно закрывает соединение с таймаутом
-func (p *PostgresClient) Shutdown(ctx context.Context) error {
+func (p *PostgresClient) Shutdown() error {
+	ctx, cancel := context.WithTimeout(context.Background(), shutDownTimeout)
+	defer cancel()
+
 	sqlDB, err := p.DB.DB()
 	if err != nil {
 		return fmt.Errorf("%w: %w", ErrFailedSQLDB, err)
