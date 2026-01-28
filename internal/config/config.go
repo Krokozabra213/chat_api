@@ -1,6 +1,7 @@
 package config
 
 import (
+	"log/slog"
 	"os"
 	"time"
 
@@ -159,4 +160,27 @@ func unmarshal(cfg *Config) error {
 	}
 
 	return nil
+}
+
+func (c *Config) LogValue() slog.Value {
+	return slog.GroupValue(
+		slog.String("env", c.App.Environment),
+		slog.Group("http",
+			slog.String("http_address", c.HTTP.Host+":"+c.HTTP.Port),
+			slog.Duration("read_timeout", c.HTTP.ReadTimeout),
+			slog.Duration("write_timeout", c.HTTP.WriteTimeout),
+			slog.Int("maxHeaderMegabytes", c.HTTP.MaxHeaderMegabytes),
+		),
+		slog.Group("postgres",
+			slog.String("host", c.Postgres.Host),
+			slog.String("port", c.Postgres.Port),
+			slog.String("db", c.Postgres.DBName),
+			slog.Int("max_conns", c.Postgres.MaxOpenConns),
+		),
+		slog.Group("limiter",
+			slog.Int("rps", c.Limiter.RPS),
+			slog.Int("burst", c.Limiter.Burst),
+			slog.Duration("ttl", c.Limiter.TTL),
+		),
+	)
 }
