@@ -1,0 +1,17 @@
+limiter:
+  rps: 10
+  burst: 20
+  ttl: 10m
+
+postgres:
+  maxOpenConns: 25
+  maxIdleConns: 5
+  connMaxLifetime: 5m
+  sslMode: "disable"
+
+http:
+  host: localhost
+  port: 8080
+  maxHeaderBytes: 1
+  readTimeout: 10s
+  writeTimeout: 10s
