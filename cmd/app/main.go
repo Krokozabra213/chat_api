@@ -2,11 +2,15 @@ package main
 
 import (
 	"log"
+	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 
+	"github.com/Krokozabra213/test_api/internal/business"
 	"github.com/Krokozabra213/test_api/internal/config"
+	handler "github.com/Krokozabra213/test_api/internal/delivery/http"
+	"github.com/Krokozabra213/test_api/internal/repository/postgres"
 	postgresclient "github.com/Krokozabra213/test_api/pkg/database/postgres-client"
 	"github.com/Krokozabra213/test_api/pkg/logger"
 )
@@ -25,6 +29,7 @@ func main() {
 	slogger := logger.Init(cfg.App.Environment)
 	slogger.Info("application started", "config", cfg)
 
+	// TODO: ОТДАВАТЬ ВЕСЬ КОНФИГ
 	pgConfig := postgresclient.NewPGConfig(cfg.Postgres.Host, cfg.Postgres.Port, cfg.Postgres.User, cfg.Postgres.Password, cfg.Postgres.DBName,
 		cfg.Postgres.SSLMode, cfg.Postgres.MaxOpenConns, cfg.Postgres.MaxIdleConns, cfg.Postgres.ConnMaxLifetime)
 	db, err := postgresclient.New(pgConfig)
@@ -32,6 +37,12 @@ func main() {
 		log.Fatal(err)
 	}
 	slogger.Info("connected to postgres")
+
+	router := http.NewServeMux()
+
+	repository := postgres.NewPostgresRepository(db)
+	business := business.New(slogger, repository, repository)
+	handler.New(router, slogger, business)
 
 	// Graceful Shutdown
 	quit := make(chan os.Signal, 1)

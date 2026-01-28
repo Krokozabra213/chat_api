@@ -6,14 +6,14 @@ import (
 	"errors"
 
 	"github.com/Krokozabra213/test_api/internal/domain"
-	"github.com/Krokozabra213/test_api/internal/repository"
+	"github.com/Krokozabra213/test_api/internal/repository/postgres"
 )
 
 // CreateChat creates a new chat with the given title.
 func (b *Business) CreateChat(ctx context.Context, title string) (*domain.Chat, error) {
 	chat, err := b.chatProvider.SaveChat(ctx, title)
 	if err != nil {
-		if errors.Is(err, repository.ErrCtxCancelled) || errors.Is(err, repository.ErrCtxDeadline) {
+		if errors.Is(err, postgres.ErrCtxCancelled) || errors.Is(err, postgres.ErrCtxDeadline) {
 			return nil, ErrTimeout
 		}
 		return nil, ErrInternal
@@ -26,7 +26,7 @@ func (b *Business) CreateChat(ctx context.Context, title string) (*domain.Chat, 
 func (b *Business) DeleteChat(ctx context.Context, chatID int64) error {
 	err := b.chatProvider.DeleteChat(ctx, chatID)
 	if err != nil {
-		if errors.Is(err, repository.ErrCtxCancelled) || errors.Is(err, repository.ErrCtxDeadline) {
+		if errors.Is(err, postgres.ErrCtxCancelled) || errors.Is(err, postgres.ErrCtxDeadline) {
 			return ErrTimeout
 		}
 		return ErrInternal
@@ -39,10 +39,10 @@ func (b *Business) DeleteChat(ctx context.Context, chatID int64) error {
 func (b *Business) CreateMessage(ctx context.Context, chatID int64, text string) (*domain.Message, error) {
 	message, err := b.messageProvider.SaveMessage(ctx, chatID, text)
 	if err != nil {
-		if errors.Is(err, repository.ErrCtxCancelled) || errors.Is(err, repository.ErrCtxDeadline) {
+		if errors.Is(err, postgres.ErrCtxCancelled) || errors.Is(err, postgres.ErrCtxDeadline) {
 			return nil, ErrTimeout
 		}
-		if errors.Is(err, repository.ErrValidation) {
+		if errors.Is(err, postgres.ErrValidation) {
 			return nil, ErrChatNotFound
 		}
 		return nil, ErrInternal
@@ -55,10 +55,10 @@ func (b *Business) CreateMessage(ctx context.Context, chatID int64, text string)
 func (b *Business) ReadChatMessages(ctx context.Context, chatID int64, limit int) (*domain.ChatMessageOutput, error) {
 	chat, err := b.chatProvider.GetChat(ctx, chatID)
 	if err != nil {
-		if errors.Is(err, repository.ErrCtxCancelled) || errors.Is(err, repository.ErrCtxDeadline) {
+		if errors.Is(err, postgres.ErrCtxCancelled) || errors.Is(err, postgres.ErrCtxDeadline) {
 			return nil, ErrTimeout
 		}
-		if errors.Is(err, repository.ErrNotFound) {
+		if errors.Is(err, postgres.ErrNotFound) {
 			return nil, ErrChatNotFound
 		}
 		return nil, ErrInternal
@@ -66,7 +66,7 @@ func (b *Business) ReadChatMessages(ctx context.Context, chatID int64, limit int
 
 	messages, err := b.messageProvider.GetMessages(ctx, chatID, limit)
 	if err != nil {
-		if errors.Is(err, repository.ErrCtxCancelled) || errors.Is(err, repository.ErrCtxDeadline) {
+		if errors.Is(err, postgres.ErrCtxCancelled) || errors.Is(err, postgres.ErrCtxDeadline) {
 			return nil, ErrTimeout
 		}
 		return nil, ErrInternal

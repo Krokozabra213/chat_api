@@ -1,23 +1,32 @@
+// Package request provides utilities for handling HTTP requests and responses.
 package request
 
 import (
+	"encoding/json"
+	"errors"
+	"fmt"
 	"net/http"
-
-	"github.com/Krokozabra213/test_api/pkg/resp"
 )
 
-func HandleBody[T any](w http.ResponseWriter, req *http.Request) (*T, error) {
-	body, err := Decode[T](req.Body)
-	if err != nil {
-		resp.JsonResp(w, 402, err.Error())
+// ErrDecode is returned when JSON decoding fails.
+var ErrDecode = errors.New("decode error")
 
-		return nil, err
-	}
-	err = IsValid[T](body)
-	if err != nil {
-		resp.JsonResp(w, 402, err.Error())
+// Validator interface for request validation.
+type Validator interface {
+	Validate() error
+}
 
-		return nil, err
+// DecodeAndValidate decodes JSON request body and validates it.
+func DecodeAndValidate[T Validator](r *http.Request) (T, error) {
+	var req T
+	
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		return req, fmt.Errorf("%w: %v", ErrDecode, err)
 	}
-	return &body, nil
+
+	if err := req.Validate(); err != nil {
+		return req, err
+	}
+
+	return req, nil
 }

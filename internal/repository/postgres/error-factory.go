@@ -1,5 +1,5 @@
-// Package repository provides data access layer for chat application.
-package repository
+// Package postgres provides data access layer for chat application.
+package postgres
 
 import (
 	"errors"

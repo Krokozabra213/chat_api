@@ -1,8 +1,9 @@
+// Package domain contains business entities and DTOs.
 package domain
 
 import "time"
 
-// Chat represents a chat entity used both as a DTO for client communication
+// Chat represents a chat entity used both as a DTO for output response
 // and as a business logic model.
 type Chat struct {
 	ID        int64     `json:"id"`
@@ -16,7 +17,7 @@ func NewChat(title string) Chat {
 	}
 }
 
-// Message represents a message entity used both as a DTO for client communication
+// Message represents a message entity used both as a DTO for output response
 // and as a business logic model.
 type Message struct {
 	ID        int64     `json:"id"`
