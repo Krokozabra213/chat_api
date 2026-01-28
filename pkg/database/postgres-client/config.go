@@ -1,8 +1,9 @@
+// Package postgresclient provides PostgreSQL connection configuration and management.
 package postgresclient
 
 import "time"
 
-// PGConfig конфигурация подключения
+// PGConfig holds PostgreSQL connection parameters and pool settings.
 type PGConfig struct {
 	host     string
 	port     string
@@ -11,12 +12,13 @@ type PGConfig struct {
 	dbName   string
 	sslMode  string
 
-	// Pool settings
+	// Connection pool settings
 	maxOpenConns    int
 	maxIdleConns    int
 	connMaxLifetime time.Duration
 }
 
+// NewPGConfig creates new PostgreSQL configuration.
 func NewPGConfig(host, port, user, password, dbName, sslMode string,
 	maxOpenConns, maxIdleConns int, connMaxLifetime time.Duration,
 ) PGConfig {

@@ -1,3 +1,4 @@
+// Package postgresclient provides PostgreSQL database client with connection pooling.
 package postgresclient
 
 import (
@@ -21,10 +22,13 @@ var (
 	ErrTimeout       = errors.New("timeout occurred")
 )
 
+// PostgresClient wraps gorm.DB with additional functionality.
 type PostgresClient struct {
 	*gorm.DB
 }
 
+// New creates and configures PostgreSQL client with connection pool.
+// Verifies connection with ping before returning.
 func New(cfg PGConfig) (*PostgresClient, error) {
 	dsn := fmt.Sprintf(
 		"host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
@@ -36,7 +40,7 @@ func New(cfg PGConfig) (*PostgresClient, error) {
 		return nil, fmt.Errorf("%w: %w", ErrFailedConnect, err)
 	}
 
-	// Настройка connection pool
+	// Configure connection pool
 	sqlDB, err := db.DB()
 	if err != nil {
 		return nil, fmt.Errorf("%w: %w", ErrFailedSQLDB, err)
@@ -56,7 +60,7 @@ func New(cfg PGConfig) (*PostgresClient, error) {
 	return &PostgresClient{db}, nil
 }
 
-// Shutdown корректно закрывает соединение с таймаутом
+// Shutdown gracefully closes database connection with timeout.
 func (p *PostgresClient) Shutdown() error {
 	ctx, cancel := context.WithTimeout(context.Background(), shutDownTimeout)
 	defer cancel()
