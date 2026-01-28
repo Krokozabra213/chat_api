@@ -21,13 +21,13 @@ type PostgresClient interface {
 
 // PostgresRepository implements chat data storage using PostgreSQL.
 type PostgresRepository struct {
-	сlient PostgresClient
+	client PostgresClient
 }
 
 // NewPostgresRepository creates new repository instance.
 func NewPostgresRepository(client PostgresClient) *PostgresRepository {
 	return &PostgresRepository{
-		сlient: client,
+		client: client,
 	}
 }
 
@@ -37,7 +37,7 @@ func (r *PostgresRepository) SaveChat(ctx context.Context, title string) (*domai
 	defer cancel()
 
 	chat := domain.NewChat(title)
-	err := r.сlient.WithContext(repoCtx).Create(&chat).Error
+	err := r.client.WithContext(repoCtx).Create(&chat).Error
 	if err != nil {
 		return nil, r.handleError(err)
 	}
@@ -51,12 +51,26 @@ func (r *PostgresRepository) GetChat(ctx context.Context, chatID int64) (*domain
 	defer cancel()
 
 	var chat domain.Chat
-	err := r.сlient.WithContext(repoCtx).First(&chat, chatID).Error
+	err := r.client.WithContext(repoCtx).First(&chat, chatID).Error
 	if err != nil {
 		return nil, r.handleError(err)
 	}
 
 	return &chat, nil
+}
+
+// DeleteChat removes a chat by its ID.
+func (r *PostgresRepository) DeleteChat(ctx context.Context, chatID int64) error {
+	repoCtx, cancel := EnsureCtxTimeout(ctx, ctxTimeout)
+	defer cancel()
+
+	err := r.client.WithContext(repoCtx).
+		Delete(&domain.Chat{}, chatID).Error
+	if err != nil {
+		return r.handleError(err)
+	}
+
+	return nil
 }
 
 // SaveMessage persists new message and returns it with generated ID & CreatedAt field.
@@ -66,7 +80,7 @@ func (r *PostgresRepository) SaveMessage(ctx context.Context, chatID int64, text
 	defer cancel()
 
 	message := domain.NewMessage(chatID, text)
-	err := r.сlient.WithContext(repoCtx).Create(&message).Error
+	err := r.client.WithContext(repoCtx).Create(&message).Error
 	if err != nil {
 		return nil, r.handleError(err)
 	}
@@ -80,7 +94,7 @@ func (r *PostgresRepository) GetMessages(ctx context.Context, chatID int64, limi
 	defer cancel()
 
 	var messages []domain.Message
-	err := r.сlient.WithContext(repoCtx).
+	err := r.client.WithContext(repoCtx).
 		Where("chat_id = ?", chatID).
 		Order("created_at DESC").
 		Limit(limit).

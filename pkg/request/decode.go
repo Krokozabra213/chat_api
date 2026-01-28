@@ -1,0 +1,17 @@
+package request
+
+import (
+	"encoding/json"
+	"fmt"
+	"io"
+)
+
+func Decode[T any](body io.Reader) (T, error) {
+	var payload T
+	err := json.NewDecoder(body).Decode(&payload)
+	fmt.Println(payload)
+	if err != nil {
+		return payload, err
+	}
+	return payload, nil
+}

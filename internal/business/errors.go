@@ -1,3 +1,4 @@
+// Package business implements core application logic.
 package business
 
 import "errors"
