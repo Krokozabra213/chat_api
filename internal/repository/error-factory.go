@@ -1,3 +1,4 @@
+// Package repository provides data access layer for chat application.
 package repository
 
 import (
@@ -6,20 +7,22 @@ import (
 	postgresclient "github.com/Krokozabra213/test_api/pkg/database/postgres-client"
 )
 
+// Repository-level errors
 var (
+	// Context errors
 	ErrCtxCancelled = errors.New("context cancelled error")
 	ErrCtxDeadline  = errors.New("context deadline error")
-	ErrUnknown      = errors.New("unknown error")
 
-	//postgres errors
+	// Database errors
 	ErrValidation = errors.New("validation error")
 	ErrDuplicate  = errors.New("duplicate key error")
 	ErrNotFound   = errors.New("not found error")
 	ErrInternal   = errors.New("internal error")
+	ErrUnknown    = errors.New("unknown error")
 )
 
-func ErrorFactory(entity string, err error) error {
-	// errors postgresclient package
+// ErrorFactory maps postgres client errors to repository-level errors.
+func ErrorFactory(err error) error {
 	var customErr *postgresclient.CustomError
 	if errors.As(err, &customErr) {
 		switch {

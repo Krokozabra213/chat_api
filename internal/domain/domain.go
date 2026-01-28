@@ -8,9 +8,22 @@ type Chat struct {
 	CreatedAt time.Time `json:"created_at"`
 }
 
+func NewChat(title string) Chat {
+	return Chat{
+		Title: title,
+	}
+}
+
 type Message struct {
 	ID        int64     `json:"id"`
 	ChatID    int64     `json:"chat_id"`
 	Text      string    `json:"text"`
 	CreatedAt time.Time `json:"created_at"`
+}
+
+func NewMessage(chatID int64, text string) Message {
+	return Message{
+		ChatID: chatID,
+		Text: text,
+	}
 }
