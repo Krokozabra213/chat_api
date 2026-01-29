@@ -11,15 +11,11 @@ import (
 
 // Default values
 const (
-	defaultHTTPHost               = "localhost"
+	defaultHTTPHost               = "0.0.0.0"
 	defaultHTTPPort               = "8080"
 	defaultHTTPWriteTimeout       = 10 * time.Second
 	defaultHTTPReadTimeout        = 10 * time.Second
 	defaultHTTPMaxHeaderMegabytes = 1
-
-	defaultLimiterRPS   = 10
-	defaultLimiterBurst = 2
-	defaultLimiterTTL   = 10 * time.Minute
 
 	defaultSSLMode         = "disable"
 	defaultMaxOpenConns    = 25
@@ -32,13 +28,6 @@ type (
 		App      AppConfig
 		HTTP     HTTPConfig
 		Postgres PostgresConfig
-		Limiter  LimiterConfig
-	}
-
-	LimiterConfig struct {
-		RPS   int
-		Burst int
-		TTL   time.Duration
 	}
 
 	AppConfig struct {
@@ -70,7 +59,6 @@ type (
 func newCfg() Config {
 	cfg := Config{
 		App:      AppConfig{},
-		Limiter:  LimiterConfig{},
 		Postgres: PostgresConfig{},
 		HTTP:     HTTPConfig{},
 	}
@@ -105,11 +93,6 @@ func populateDefault() {
 	viper.SetDefault("http.maxHeaderMegabytes", defaultHTTPMaxHeaderMegabytes)
 	viper.SetDefault("http.readTimeout", defaultHTTPReadTimeout)
 	viper.SetDefault("http.writeTimeout", defaultHTTPWriteTimeout)
-
-	// limiter config
-	viper.SetDefault("limiter.rps", defaultLimiterRPS)
-	viper.SetDefault("limiter.burst", defaultLimiterBurst)
-	viper.SetDefault("limiter.ttl", defaultLimiterTTL)
 
 	// postgres config
 	viper.SetDefault("postgres.sslMode", defaultSSLMode)
@@ -151,10 +134,6 @@ func unmarshal(cfg *Config) error {
 		return err
 	}
 
-	if err := viper.UnmarshalKey("limiter", &cfg.Limiter); err != nil {
-		return err
-	}
-
 	if err := viper.UnmarshalKey("postgres", &cfg.Postgres); err != nil {
 		return err
 	}
@@ -176,11 +155,6 @@ func (c *Config) LogValue() slog.Value {
 			slog.String("port", c.Postgres.Port),
 			slog.String("db", c.Postgres.DBName),
 			slog.Int("max_conns", c.Postgres.MaxOpenConns),
-		),
-		slog.Group("limiter",
-			slog.Int("rps", c.Limiter.RPS),
-			slog.Int("burst", c.Limiter.Burst),
-			slog.Duration("ttl", c.Limiter.TTL),
 		),
 	)
 }

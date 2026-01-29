@@ -1,6 +1,22 @@
 version: "3"
 
 services:
+  chat:
+    image: chat-backend
+    container_name: chat-backend
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "0.0.0.0:8180:8080"
+    volumes:
+      - ./docker.env:/app/.env:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - app-network
+
   postgres:
     container_name: postgres
     image: postgres:16.4
@@ -9,7 +25,7 @@ services:
     volumes:
       - postgres-data:/var/lib/postgresql/data
     ports:
-      - "127.0.0.1:5555:5432"
+      - "0.0.0.0:5555:5432"
     restart: unless-stopped
     shm_size: 128mb
     healthcheck:

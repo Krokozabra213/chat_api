@@ -12,8 +12,7 @@ import (
 )
 
 const (
-	pingTimeout     = 5 * time.Second
-	shutDownTimeout = 10 * time.Second
+	pingTimeout = 5 * time.Second
 )
 
 var (
@@ -61,7 +60,7 @@ func New(cfg PGConfig) (*PostgresClient, error) {
 }
 
 // Shutdown gracefully closes database connection with timeout.
-func (p *PostgresClient) Shutdown() error {
+func (p *PostgresClient) Shutdown(shutDownTimeout time.Duration) error {
 	ctx, cancel := context.WithTimeout(context.Background(), shutDownTimeout)
 	defer cancel()
 
