@@ -26,6 +26,3 @@
 # Binaries
 bin/
 *.exe
-
-# Migrations
-migrations/goose/
