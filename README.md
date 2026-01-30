@@ -21,7 +21,7 @@ POSTGRES_DB=postgres
 POSTGRES_PASSWORD=mypassword
 ```
 
-1. В корневой каталог проекта добавить файл docker.env
+2. В корневой каталог проекта добавить файл docker.env
 ```bash
 ENV=local
 APP_SECRET=your-very-long-and-secure-secret-key-here-256-bit
