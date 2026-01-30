@@ -1,7 +1,7 @@
 POSTGRES_DSN=postgres://myuser:mypassword@localhost:5555/postgres?sslmode=disable
 MIGRATIONS_GOOSE_DIR=migrations/goose
 
-.PHONY: up down help migrate-create migrate-up migrate-down migrate-status migrate-reset
+.PHONY: up down help migrate-create migrate-up migrate-down migrate-status migrate-reset tests
 
 # Default target
 help:
@@ -15,6 +15,7 @@ help:
 	@echo "  migrate-down                         Rollback last migration"
 	@echo "  migrate-status                       Show migrations status"
 	@echo "  migrate-reset                        Rollback all migrations"
+	@echo "  tests                                Start tests"
 
 # Start containers
 docker-up:
@@ -40,3 +41,7 @@ migrate-status:
 
 migrate-reset:
 	goose -dir $(MIGRATIONS_GOOSE_DIR) postgres "$(POSTGRES_DSN)" reset
+
+# Start tests
+tests:
+	go test -v -count=1 ./tests/...  

@@ -18,6 +18,9 @@ type ErrorResponse struct {
 
 func TestCreateChat(t *testing.T) {
 	ctx, st := suite.New(t)
+	t.Cleanup(func() {
+		st.CleanupTestData()
+	})
 
 	title := "Test Chat"
 	resp, err := st.HTTPClient.POST(ctx, "/chats", map[string]string{
@@ -40,6 +43,9 @@ func TestCreateChat(t *testing.T) {
 
 func TestCreateChat_Validate(t *testing.T) {
 	ctx, st := suite.New(t)
+	t.Cleanup(func() {
+		st.CleanupTestData()
+	})
 
 	title := strings.Repeat("t", 220)
 	resp, err := st.HTTPClient.POST(ctx, "/chats", map[string]string{
@@ -60,6 +66,9 @@ func TestCreateChat_Validate(t *testing.T) {
 
 func TestCreateChat_Sanitize(t *testing.T) {
 	ctx, st := suite.New(t)
+	t.Cleanup(func() {
+		st.CleanupTestData()
+	})
 
 	title := strings.Repeat(" ", 200) + strings.Repeat("t", 10) + strings.Repeat(" ", 200)
 	resp, err := st.HTTPClient.POST(ctx, "/chats", map[string]string{
@@ -82,6 +91,9 @@ func TestCreateChat_Sanitize(t *testing.T) {
 
 func TestSendMessage(t *testing.T) {
 	ctx, st := suite.New(t)
+	t.Cleanup(func() {
+		st.CleanupTestData()
+	})
 
 	title := "Test Chat"
 	resp, err := st.HTTPClient.POST(ctx, "/chats", map[string]string{
@@ -118,42 +130,3 @@ func TestSendMessage(t *testing.T) {
 	assert.NotZero(t, message.ID)
 	assert.NotZero(t, message.CreatedAt)
 }
-
-// func TestSendMessage_Parse_ChatID(t *testing.T) {
-// 	ctx, st := suite.New(t)
-
-// 	title := "Test Chat"
-// 	resp, err := st.HTTPClient.POST(ctx, "/chats", map[string]string{
-// 		"title": title,
-// 	})
-// 	if err != nil {
-// 		t.Fatal(err)
-// 	}
-
-// 	require.Equal(t, http.StatusCreated, resp.StatusCode)
-
-// 	var chat domain.Chat
-// 	err = resp.JSON(&chat)
-// 	require.NoError(t, err)
-
-// 	text := "Test Text"
-// 	path := fmt.Sprintf("/chats/%d/messages", chat.ID)
-
-// 	resp, err = st.HTTPClient.POST(ctx, path, map[string]string{
-// 		"text": text,
-// 	})
-// 	if err != nil {
-// 		t.Fatal(err)
-// 	}
-
-// 	require.Equal(t, http.StatusCreated, resp.StatusCode)
-
-// 	var message domain.Message
-// 	err = resp.JSON(&message)
-// 	require.NoError(t, err)
-
-// 	assert.Equal(t, chat.ID, message.ChatID)
-// 	assert.Equal(t, text, message.Text)
-// 	assert.NotZero(t, message.ID)
-// 	assert.NotZero(t, message.CreatedAt)
-// }

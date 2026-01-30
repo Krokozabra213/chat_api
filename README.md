@@ -61,7 +61,9 @@ chat/
 │   ├── repository/postgres/      # Работа с PostgreSQL
 │   └── server/                   # HTTP-сервер
 ├── migrations/goose/             # SQL-миграции
-└── pkg/                          # Вспомогательные пакеты
+├── pkg/                          # Вспомогательные пакеты
+└── tests/app                     # Тесты
+
 ```
 
 ---

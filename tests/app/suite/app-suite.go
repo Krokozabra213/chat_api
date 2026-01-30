@@ -64,3 +64,28 @@ func New(t *testing.T) (context.Context, *APISuite) {
 		HTTPClient: client,
 	}
 }
+
+func (s *APISuite) CleanupTestData() error {
+	err := s.CleanupMessages()
+	if err != nil {
+		return err
+	}
+
+	return s.CleanupChats()
+}
+
+func (s *APISuite) CleanupMessages() error {
+	result := s.DB.Exec("TRUNCATE TABLE messages CASCADE")
+	if result.Error != nil {
+		return result.Error
+	}
+	return nil
+}
+
+func (s *APISuite) CleanupChats() error {
+	result := s.DB.Exec("TRUNCATE TABLE chats CASCADE")
+	if result.Error != nil {
+		return result.Error
+	}
+	return nil
+}
