@@ -9,6 +9,30 @@
 2. [Make](https://www.gnu.org/software/make/) (для работы с Makefile)
 3. [Goose](https://pressly.github.io/goose/) (для выполнения миграций)
 
+**Переменные окружения:**
+1. В корневой каталог проекта добавить файл .env
+```bash
+ENV=local
+APP_SECRET=your-very-long-and-secure-secret-key-here-256-bit
+POSTGRES_USER=myuser
+POSTGRES_HOST=localhost
+POSTGRES_PORT=5555
+POSTGRES_DB=postgres
+POSTGRES_PASSWORD=mypassword
+```
+
+1. В корневой каталог проекта добавить файл docker.env
+```bash
+ENV=local
+APP_SECRET=your-very-long-and-secure-secret-key-here-256-bit
+POSTGRES_USER=myuser
+POSTGRES_HOST=postgres
+POSTGRES_PORT=5432
+POSTGRES_DB=postgres
+POSTGRES_PASSWORD=mypassword
+
+```
+
 **Команды:**
 ```bash
 make docker-up      # Запуск контейнеров

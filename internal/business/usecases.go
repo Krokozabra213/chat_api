@@ -15,7 +15,7 @@ func (b *Business) CreateChat(ctx context.Context, title string) (*domain.Chat, 
 	const op = "business.CreateChat"
 	log := b.log.With(
 		slog.String("op", op),
-		slog.String("title", title),
+		slog.Int("title_len", len(title)),
 	)
 	log.Info("starting CreateChat process")
 
