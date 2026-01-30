@@ -37,6 +37,7 @@ POSTGRES_PASSWORD=mypassword
 ```bash
 make docker-up      # Запуск контейнеров
 make migrate-up     # Применение миграций
+make tests          # Запуск тестов
 ```
 
 После выполнения этих команд приложение будет доступно по адресу: http://localhost:8180<br>
