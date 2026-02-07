@@ -57,5 +57,5 @@ wait-db:
 
 ci-test: docker-up
 	$(MAKE) migrate-up
-	$(MAKE) test
-	docker-compose down -
+	$(MAKE) tests
+	docker compose down
