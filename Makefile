@@ -1,5 +1,6 @@
 POSTGRES_DSN=postgres://myuser:mypassword@localhost:5555/postgres?sslmode=disable
 MIGRATIONS_GOOSE_DIR=migrations/goose
+DB_USER=myuser
 
 .PHONY: up down help migrate-create migrate-up migrate-down migrate-status migrate-reset tests
 
@@ -19,7 +20,7 @@ help:
 
 # Start containers
 docker-up:
-	docker compose up -d
+	docker compose up -d --wait
 
 # Stop containers
 docker-down:
@@ -44,4 +45,17 @@ migrate-reset:
 
 # Start tests
 tests:
-	go test -v -count=1 ./tests/...  
+	go test -v -count=1 ./tests/... 
+
+wait-db:
+	@echo "Waiting for PostgreSQL..."
+	@until docker-compose exec -T postgres pg_isready -U $(DB_USER) > /dev/null 2>&1; do \
+		echo "PostgreSQL is unavailable - sleeping"; \
+		sleep 1; \
+	done
+	@echo "PostgreSQL is up"
+
+ci-test: docker-up
+	$(MAKE) migrate-up
+	$(MAKE) tests
+	docker compose down

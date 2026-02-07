@@ -1,0 +1,52 @@
+name: Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.24'
+          cache: true
+
+      - name: Create .env file
+        run: |
+          cat > .env << EOF
+          ENV=local
+          APP_SECRET=your-very-long-and-secure-secret-key-here-256-bit
+
+          POSTGRES_USER=myuser
+          POSTGRES_HOST=localhost
+          POSTGRES_PORT=5555
+          POSTGRES_DB=postgres
+          POSTGRES_PASSWORD=mypassword
+          EOF
+
+      - name: Create docker.env file
+        run: |
+          cat > docker.env << EOF
+          ENV=local
+          APP_SECRET=your-very-long-and-secure-secret-key-here-256-bit
+          POSTGRES_USER=myuser
+          POSTGRES_HOST=postgres
+          POSTGRES_PORT=5432
+          POSTGRES_DB=postgres
+          POSTGRES_PASSWORD=mypassword
+          EOF
+
+      - name: Install goose
+        run: go install github.com/pressly/goose/v3/cmd/goose@latest
+
+      - name: Run CI tests
+        run: make ci-test
