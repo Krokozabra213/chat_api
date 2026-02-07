@@ -20,20 +20,33 @@ jobs:
           go-version: '1.24'
           cache: true
 
+      - name: Create .env file
+        run: |
+          cat > .env << EOF
+          ENV=local
+          APP_SECRET=your-very-long-and-secure-secret-key-here-256-bit
+
+          POSTGRES_USER=myuser
+          POSTGRES_HOST=localhost
+          POSTGRES_PORT=5555
+          POSTGRES_DB=postgres
+          POSTGRES_PASSWORD=mypassword
+          EOF
+
+      - name: Create docker.env file
+        run: |
+          cat > docker.env << EOF
+          ENV=local
+          APP_SECRET=your-very-long-and-secure-secret-key-here-256-bit
+          POSTGRES_USER=myuser
+          POSTGRES_HOST=postgres
+          POSTGRES_PORT=5432
+          POSTGRES_DB=postgres
+          POSTGRES_PASSWORD=mypassword
+          EOF
+
       - name: Install goose
         run: go install github.com/pressly/goose/v3/cmd/goose@latest
 
-      # Одна команда для всего CI
       - name: Run CI tests
         run: make ci-test
-
-      # Логи при ошибке
-      - name: Show Docker logs on failure
-        if: failure()
-        run: docker-compose logs
-
-      # Upload coverage
-      - name: Upload coverage
-        uses: codecov/codecov-action@v4
-        with:
-          file: ./coverage.out
