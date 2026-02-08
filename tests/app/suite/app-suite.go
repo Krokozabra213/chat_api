@@ -33,7 +33,7 @@ func New(t *testing.T) (context.Context, *APISuite) {
 	}
 
 	pgConfig := postgresclient.NewPGConfig(
-		cfg.Postgres.Host,
+		"localhost",
 		cfg.Postgres.Port,
 		cfg.Postgres.User,
 		cfg.Postgres.Password,

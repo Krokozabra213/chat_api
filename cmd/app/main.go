@@ -38,6 +38,10 @@ func run() error {
 		return err
 	}
 
+	if cfg.App.Environment == "local" {
+		cfg.Postgres.Host = "localhost"
+	}
+
 	// Logger
 	log := logger.Init(cfg.App.Environment)
 	log.Info("initialized config", "config", cfg.LogValue())
@@ -45,7 +49,8 @@ func run() error {
 
 	// Database
 	pgConfig := postgresclient.NewPGConfig(
-		cfg.Postgres.Host,
+		// cfg.Postgres.Host,
+		"localhost",
 		cfg.Postgres.Port,
 		cfg.Postgres.User,
 		cfg.Postgres.Password,
@@ -55,6 +60,8 @@ func run() error {
 		cfg.Postgres.MaxIdleConns,
 		cfg.Postgres.ConnMaxLifetime,
 	)
+	// fmt.Println(cfg.Postgres.Host)
+	// fmt.Println(cfg.Postgres.Port)
 
 	db, err := postgresclient.New(pgConfig)
 	if err != nil {
