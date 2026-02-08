@@ -1,4 +1,4 @@
-POSTGRES_DSN=postgres://myuser:mypassword@localhost:5555/postgres?sslmode=disable
+POSTGRES_DSN=postgres://myuser:mypassword@localhost:5432/postgres?sslmode=disable
 MIGRATIONS_GOOSE_DIR=migrations/goose
 DB_USER=myuser
 
@@ -45,7 +45,7 @@ migrate-reset:
 
 # Start tests
 tests:
-	go test -v -count=1 ./tests/... 
+	go test -v -count=1 ./tests/...
 
 wait-db:
 	@echo "Waiting for PostgreSQL..."

@@ -23,21 +23,9 @@ jobs:
       - name: Create .env file
         run: |
           cat > .env << EOF
-          ENV=local
+          ENV=docker
           APP_SECRET=your-very-long-and-secure-secret-key-here-256-bit
 
-          POSTGRES_USER=myuser
-          POSTGRES_HOST=localhost
-          POSTGRES_PORT=5555
-          POSTGRES_DB=postgres
-          POSTGRES_PASSWORD=mypassword
-          EOF
-
-      - name: Create docker.env file
-        run: |
-          cat > docker.env << EOF
-          ENV=local
-          APP_SECRET=your-very-long-and-secure-secret-key-here-256-bit
           POSTGRES_USER=myuser
           POSTGRES_HOST=postgres
           POSTGRES_PORT=5432

@@ -38,6 +38,10 @@ func run() error {
 		return err
 	}
 
+	if cfg.App.Environment == "local" {
+		cfg.Postgres.Host = "localhost"
+	}
+
 	// Logger
 	log := logger.Init(cfg.App.Environment)
 	log.Info("initialized config", "config", cfg.LogValue())

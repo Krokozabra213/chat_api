@@ -12,25 +12,13 @@
 **Переменные окружения:**
 1. В корневой каталог проекта добавить файл .env
 ```bash
-ENV=local
-APP_SECRET=your-very-long-and-secure-secret-key-here-256-bit
-POSTGRES_USER=myuser
-POSTGRES_HOST=localhost
-POSTGRES_PORT=5555
-POSTGRES_DB=postgres
-POSTGRES_PASSWORD=mypassword
-```
-
-2. В корневой каталог проекта добавить файл docker.env
-```bash
-ENV=local
+ENV=docker
 APP_SECRET=your-very-long-and-secure-secret-key-here-256-bit
 POSTGRES_USER=myuser
 POSTGRES_HOST=postgres
 POSTGRES_PORT=5432
 POSTGRES_DB=postgres
 POSTGRES_PASSWORD=mypassword
-
 ```
 
 **Команды:**
